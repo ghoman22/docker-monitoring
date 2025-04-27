@@ -29,10 +29,10 @@ jobs:
         scp -i temp_key -o StrictHostKeyChecking=no -r website/* $DEPLOY_USER@$DEPLOY_SERVER:/home/ubuntu/webapps/website/
 
         # 2. Copy script deploy ke server
-        scp -i temp_key -o StrictHostKeyChecking=no docker+compose.sh $DEPLOY_USER@$DEPLOY_SERVER:/tmp
+        scp -i temp_key -o StrictHostKeyChecking=no docker.sh $DEPLOY_USER@$DEPLOY_SERVER:/tmp
 
         # 3. Jalankan script deploy
-        ssh -i temp_key -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER 'bash /tmp/docker+compose.sh'
+        ssh -i temp_key -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER 'bash /tmp/docker.sh'
 
         # 4. Hapus SSH key sementara
         rm -f temp_key
