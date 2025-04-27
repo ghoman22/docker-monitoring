@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code 
+      uses: actions/checkout@v4
+
+    - name: Deploy to Server
+      env:
+        DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER_IP }}
+        DEPLOY_USER: ${{ secrets.DEPLOY_USER_UBUNTU }}
+        SSH_KEY: ${{ secrets.SSH_KEY_UBUNTU }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -t rsa $DEPLOY_SERVER >> ~/.ssh/known_hosts
+        echo "$SSH_KEY" | tr -d '\r' > temp_key
+        chmod 600 temp_key
+
+        # 1. Copy website ke server
+        ssh -i temp_key -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER 'mkdir -p /home/ubuntu/webapps/website'
+        scp -i temp_key -o StrictHostKeyChecking=no -r website/* $DEPLOY_USER@$DEPLOY_SERVER:/home/ubuntu/webapps/website/
+
+        # 2. Copy script deploy ke server
+        scp -i temp_key -o StrictHostKeyChecking=no docker+compose.sh $DEPLOY_USER@$DEPLOY_SERVER:/tmp
+
+        # 3. Jalankan script deploy
+        ssh -i temp_key -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER 'bash /tmp/docker+compose.sh'
+
+        # 4. Hapus SSH key sementara
+        rm -f temp_key

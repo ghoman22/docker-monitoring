@@ -1,0 +1,16 @@
+{
+  "name": "node-monitor-app",
+  "version": "1.0.0",
+  "description": "Simple Node.js app with metrics for Prometheus",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "prom-client": "^14.1.0"
+  },
+  "author": "lu sendirilah",
+  "license": "MIT"
+}

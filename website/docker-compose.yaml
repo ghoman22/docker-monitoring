@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: ./flask
+    ports:
+      - "5000:5000"
+    networks:
+      - webnet
+
+  node-app:
+    build: ./node
+    ports:
+      - "3000:3000"
+    networks:
+      - webnet
+
+  golang-app:
+    build: ./golang
+    ports:
+      - "8080:8080"
+    networks:
+      - webnet
+
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - webnet
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - webnet
+    depends_on:
+      - prometheus
+
+  node-exporter:  # Tambahkan service Node Exporter di sini
+    image: prom/node-exporter
+    ports:
+      - "9100:9100"  # Node Exporter port
+    networks:
+      - webnet
+
+networks:
+  webnet:
